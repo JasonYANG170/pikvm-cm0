@@ -1,0 +1,30 @@
+kvmd:
+    msd:
+        type: disabled
+    gpio:
+        drivers: {}
+        scheme: {}
+    hid:
+        mouse_alt:
+            device: /dev/kvmd-hid-mouse-alt
+    streamer:
+        resolution:
+            default: 1024x768
+        cmd:
+            - "/usr/bin/ustreamer"
+            - "--device=/dev/kvmd-video"
+            - "--persistent"
+            - "--format=uyvy"
+            - "--resolution={resolution}"
+            - "--desired-fps={desired_fps}"
+            - "--drop-same-frames=30"
+            - "--last-as-blank=0"
+            - "--unix={unix}"
+            - "--unix-rm"
+            - "--unix-mode=0660"
+            - "--exit-on-parent-death"
+            - "--process-name-prefix={process_name_prefix}"
+            - "--notify-parent"
+            - "--no-log-colors"
+            - "--sink=kvmd::ustreamer::jpeg"
+            - "--sink-mode=0660"

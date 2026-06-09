@@ -1,0 +1,12 @@
+[Unit]
+Description=PiKVM Boot Setup
+After=local-fs.target
+Before=kvmd.service
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/bin/kvmd-setup.sh
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,15 @@
+# Raspberry Pi 4 Boot Configuration for PiKVM
+# 需要添加到 /boot/firmware/config.txt 的 [all] 段
+
+[all]
+# USB OTG 设备模式（PiKVM 必需）
+dtoverlay=dwc2,dr_mode=otg
+
+# TC358743 HDMI 采集驱动
+dtoverlay=tc358743
+
+# 启用串口
+enable_uart=1
+
+# 注意：如果存在 otg_mode=1，需要注释掉或删除
+# 因为它与 dwc2 overlay 冲突
