@@ -1,26 +1,17 @@
-# fruity-pikvm-deploy
+# PIKVM-CM0
 
-一键部署 PiKVM 到 Raspberry Pi 4 + TC358743 HDMI 采集卡
+一键部署 PiKVM 到 Raspberry Pi CM0 + TC358743 HDMI 采集卡
 
 ## 硬件要求
 
 | 组件 | 型号 |
 |------|------|
 | 单板计算机 | Raspberry Pi CM0 |
-| HDMI 采集 | TC358743 HDMI-to-CSI 转接板 |
-| USB OTG | USB-C OTG 线（数据线，非充电线） |
-| 存储 | MicroSD 卡（≥16GB） |
+| HDMI 采集 | TC358743 HDMI-to-CSI  |
+| USB OTG | USB-C OTG 线|
+| 存储 | 16GB |
 | 电源 | USB-C 5V/3A 电源 |
 
-## 连接方式
-
-```
-[HDMI 源设备] --HDMI线--> [TC358743] --CSI排线--> [Raspberry Pi 4]
-                                                    |
-                                                    |-- USB-C OTG线 --> [被控设备 USB 口]
-                                                    |
-                                                    |-- 网线/WiFi --> [局域网]
-```
 
 ## 快速部署
 
@@ -279,8 +270,3 @@ fruity-pikvm-deploy/
 - [PiKVM](https://github.com/pikvm/pikvm) - GPLv3
 - [ustreamer](https://github.com/pikvm/ustreamer) - GPLv3
 
-## 致谢
-
-- [PiKVM](https://pikvm.org/) - 原始 PiKVM 项目
-- [fruity-pikvm](https://github.com/jacobbar/fruity-pikvm) - 非官方 SBC 支持
-- [ustreamer](https://github.com/pikvm/ustreamer) - 轻量级 MJPEG 流媒体
