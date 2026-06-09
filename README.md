@@ -37,7 +37,7 @@
 
 ```bash
 # 下载部署脚本
-wget https://raw.githubusercontent.com/<你的用户名>/fruity-pikvm-deploy/main/deploy.sh
+wget https://raw.githubusercontent.com/JasonYANG170/pikvm-cm0/main/deploy.sh
 chmod +x deploy.sh
 
 # 运行部署（约 30-60 分钟）
