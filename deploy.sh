@@ -466,7 +466,13 @@ apply_config() {
     systemctl enable kvmd-setup kvmd kvmd-nginx kvmd-webterm
 
     # 复制 EDID
-    cp "$SCRIPT_DIR/edid/v2-hdmi.hex" /etc/kvmd/tc358743-edid.hex 2>/dev/null || true
+    cp "$SCRIPT_DIR/edid/tc358743-edid.hex" /etc/kvmd/tc358743-edid.hex
+
+    if command -v nmcli >/dev/null; then
+        install -d /etc/NetworkManager/conf.d
+        install -m644 "$SCRIPT_DIR/configs/99-pikvm-wifi-powersave.conf" /etc/NetworkManager/conf.d/
+        nmcli general reload conf
+    fi
 
     # 修复权限
     mkdir -p /run/kvmd
@@ -510,8 +516,7 @@ start_services() {
     ln -sf /dev/video0 /dev/kvmd-video
 
     # 设置 EDID
-    v4l2-ctl --device=/dev/kvmd-video --set-edid=type=hdmi 2>/dev/null || true
-    v4l2-ctl --device=/dev/kvmd-video --set-dv-bt-timings query 2>/dev/null || true
+    # kvmd-setup loads the persisted EDID; uStreamer follows input timings.
 
     # 启动服务
     systemctl restart kvmd-setup 2>/dev/null || true
