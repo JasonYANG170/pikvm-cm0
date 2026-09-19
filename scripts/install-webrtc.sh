@@ -45,7 +45,7 @@ if ldd ustreamer-5.37/janus/libjanus_ustreamer.so | grep -q 'not found'; then
 fi
 if [[ ${1:-} == --build-only ]]; then echo "Build passed: $build"; exit 0; fi
 backup=$(mktemp -d /var/backups/pikvm-webrtc.XXXXXX)
-files=(/usr/lib/ustreamer/janus/libjanus_ustreamer.so /usr/share/janus/javascript/janus.js /usr/share/janus/javascript/adapter.js)
+files=(/usr/lib/ustreamer/janus/libjanus_ustreamer.so /usr/share/janus/javascript/janus.js /usr/share/janus/javascript/adapter.js /usr/share/kvmd/web/share/js/kvm/stream_janus.js)
 for name in janus.jcfg janus.plugin.ustreamer.jcfg janus.transport.websockets.jcfg; do files+=("/etc/kvmd/janus/$name"); done
 for file in "${files[@]}"; do
     if [[ -e $file ]]; then cp --parents -a "$file" "$backup"; else echo "$file" >> "$backup/created-files"; fi
@@ -67,6 +67,7 @@ if grep -qx enabled "$base/enabled-before"; then systemctl enable kvmd-janus-sta
 if grep -qx active "$base/active-before"; then systemctl start kvmd-janus-static; fi
 RESTORE
 chmod 700 "$backup/restore.sh"
+if ! /usr/bin/python3 "$repo/scripts/fix-janus-web.py"; then bash "$backup/restore.sh"; exit 1; fi
 if ! systemctl restart kvmd-janus-static; then bash "$backup/restore.sh"; exit 1; fi
 sleep 3
 if ! systemctl is-active --quiet kvmd-janus-static || [[ ! -S /run/kvmd/janus-ws.sock ]]; then
