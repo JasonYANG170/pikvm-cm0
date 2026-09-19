@@ -2,6 +2,20 @@
 
 一键部署 PiKVM 到 Raspberry Pi CM0 + TC358743 HDMI 采集卡
 
+## 已有设备的视频优化
+
+已有安装请先阅读 [优化与回滚说明](docs/optimizations.md)，无需重装系统：
+
+```bash
+git clone https://github.com/JasonYANG170/pikvm-cm0.git
+cd pikvm-cm0
+sudo bash scripts/install-webrtc.sh       # 可选，适配 Janus 1.1.2 / uStreamer 5.37
+sudo bash scripts/apply-optimizations.sh
+```
+
+包含自动 HDMI 时序、1080p50 EDID、硬件编码、自动帧率、Wi-Fi 省电关闭和 H.264/WebRTC。
+保留桌面和账号；重启视频服务后需重新登录。已测 1024×768 下本机约 60 fps，不代表 1080p 或浏览器实际帧率。
+
 ## 硬件要求
 
 | 组件 | 型号 |
@@ -36,8 +50,9 @@
 ### 3. 一键部署
 
 ```bash
-# 下载部署脚本
-wget https://raw.githubusercontent.com/JasonYANG170/pikvm-cm0/main/deploy.sh
+# 下载完整仓库（部署脚本依赖 configs、scripts、systemd 和 edid）
+git clone https://github.com/JasonYANG170/pikvm-cm0.git
+cd pikvm-cm0
 chmod +x deploy.sh
 
 # 运行部署（约 30-60 分钟）
@@ -106,6 +121,7 @@ sudo ./scripts/fix-compat.sh
 
 ```bash
 sudo cp configs/override.yaml /etc/kvmd/override.yaml
+sudo cp edid/tc358743-edid.hex /etc/kvmd/tc358743-edid.hex
 sudo cp scripts/kvmd-setup.sh /usr/local/bin/kvmd-setup.sh
 sudo chmod +x /usr/local/bin/kvmd-setup.sh
 sudo cp systemd/kvmd-setup.service /etc/systemd/system/
@@ -140,11 +156,15 @@ kvmd:
             device: /dev/kvmd-hid-mouse-alt  # 启用双鼠标模式
     streamer:
         resolution:
-            default: 1024x768    # 默认分辨率
+            default: 1920x1080       # 实际采集自动跟随 HDMI 源
+        desired_fps:
+            default: 0               # 自动帧率
         cmd:
             - "/usr/bin/ustreamer"
             - "--device=/dev/kvmd-video"
             - "--format=uyvy"    # TC358743 输出格式
+            - "--dv-timings"
+            - "--encoder=M2M-VIDEO"
             # ... 其他参数
 ```
 
@@ -153,7 +173,7 @@ kvmd:
 启动时自动执行：
 - 创建 `/dev/kvmd-video` 符号链接
 - 设置 EDID
-- 配置 DV timings
+- 由 uStreamer 持续跟随 DV timings，支持源设备晚开机
 - 修复权限
 
 ### boot/config.txt
@@ -173,8 +193,8 @@ enable_uart=1                  # 启用串口
 
 **解决**：
 ```bash
-sudo v4l2-ctl --device /dev/video0 --set-edid=type=hdmi
-sudo v4l2-ctl --device /dev/video0 --set-dv-bt-timings query
+sudo systemctl stop kvmd
+sudo /usr/local/bin/kvmd-setup.sh
 sudo systemctl restart kvmd
 ```
 
@@ -184,7 +204,8 @@ sudo systemctl restart kvmd
 
 **解决**：
 ```bash
-sudo v4l2-ctl --device /dev/video0 --set-dv-bt-timings query
+v4l2-ctl --device /dev/video0 --query-dv-timings
+# 使用 scripts/apply-optimizations.sh 启用 --dv-timings 自动同步。
 ```
 
 ### 3. 鼠标键盘无响应

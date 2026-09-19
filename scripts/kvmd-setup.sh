@@ -1,6 +1,6 @@
 #!/bin/bash
 # PiKVM boot setup script
-# 在 kvmd 服务启动前执行，确保设备和权限正确
+set -euo pipefail
 
 # Wait for devices to be ready
 sleep 3
@@ -8,18 +8,18 @@ sleep 3
 # Create kvmd-video symlink
 ln -sf /dev/video0 /dev/kvmd-video
 
-# Set EDID (use built-in hdmi type)
-v4l2-ctl --device=/dev/kvmd-video --set-edid=type=hdmi 2>/dev/null
+# Apply the persistent PiKVM CSI EDID
+v4l2-ctl --device=/dev/kvmd-video --set-edid=file=/etc/kvmd/tc358743-edid.hex || exit 1
 
-# Set DV timings
-v4l2-ctl --device=/dev/kvmd-video --set-dv-bt-timings query 2>/dev/null
+# Video timings are queried and followed by uStreamer --dv-timings.
+# Do not query once at boot: the HDMI source may still be off.
 
 # Fix permissions
 mkdir -p /run/kvmd
-chown -R kvmd:kvmd /run/kvmd
+chown kvmd:kvmd /run/kvmd
 chmod 775 /run/kvmd
 
 # Add kvmd user to dialout group
-usermod -aG dialout kvmd 2>/dev/null
+usermod -aG dialout kvmd
 
 exit 0
