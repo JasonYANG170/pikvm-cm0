@@ -2,17 +2,17 @@
 
 # PIKVM-CM0
 
-一键部署 PiKVM 到 Raspberry Pi CM0 + TC358743 HDMI 采集卡
+One-click deployment of PiKVM to Raspberry Pi CM0 + TC358743 HDMI capture card
 
-## 项目展示
+## Project showcase
 
-![基于树莓派 CM0 的 IPKVM 无线采集卡](docs/images/project-hardware.webp)
+![IPKVM wireless capture card based on Raspberry Pi CM0](docs/images/project-hardware.webp)
 
-[硬件项目与图片来源](https://oshwhub.com/jasonyang17/rbpi-kvm)
+[Hardware project and image source](https://oshwhub.com/jasonyang17/rbpi-kvm)
 
-## 已有设备的视频优化
+## Video optimization for existing devices
 
-已有安装请先阅读 [优化与回滚说明](docs/optimizations.md)，无需重装系统：
+If you have already installed it, please read [Optimization and Rollback Instructions](docs/optimizations.md) first, no need to reinstall the system:
 
 ```bash
 git clone https://github.com/JasonYANG170/pikvm-cm0.git
@@ -21,41 +21,41 @@ sudo bash scripts/install-webrtc.sh       # 可选，适配 Janus 1.1.2 / uStrea
 sudo bash scripts/apply-optimizations.sh
 ```
 
-包含自动 HDMI 时序、1080p50 EDID、硬件编码、自动帧率、Wi-Fi 省电关闭和 H.264/WebRTC。
-保留桌面和账号；重启视频服务后需重新登录。已测 1024×768 下本机约 60 fps，不代表 1080p 或浏览器实际帧率。
+Includes automatic HDMI timing, 1080p50 EDID, hardware encoding, automatic frame rate, Wi-Fi power saving off, and H.264/WebRTC.
+The desktop and accounts are retained; log in again after restarting the video service. Testing at 1024×768 measured approximately 60 fps on the device itself; this does not establish 1080p performance or the actual browser frame rate.
 
-## 硬件要求
+## Hardware requirements
 
-| 组件 | 型号 |
+| Components | Model |
 |------|------|
-| 单板计算机 | Raspberry Pi CM0 |
-| HDMI 采集 | TC358743 HDMI-to-CSI  |
-| USB OTG | USB-C OTG 线|
-| 存储 | 16GB |
-| 电源 | USB-C 5V/3A 电源 |
+| Single Board Computer | Raspberry Pi CM0 |
+| HDMI capture | TC358743 HDMI-to-CSI |
+| USB OTG | USB-C OTG cable |
+| Storage | 16GB |
+| Power supply | USB-C 5V/3A power supply |
 
 
-## 快速部署
+## Rapid deployment
 
-### 1. 准备系统镜像
+### 1. Prepare system image
 
-1. 下载 [Raspberry Pi OS Lite (64-bit)](https://www.raspberrypi.com/software/operating-systems/)
-2. 使用 [Raspberry Pi Imager](https://www.raspberrypi.com/software/) 烧录到 SD 卡
-3. 在 Imager 中预配置：
-   - 启用 SSH
-   - 设置用户名密码（如 `rbpi-kvm` / `rbpi-kvm`）
-   - 配置 WiFi（可选）
+1. Download [Raspberry Pi OS Lite (64-bit)](https://www.raspberrypi.com/software/operating-systems/)
+2. Use [Raspberry Pi Imager](https://www.raspberrypi.com/software/) to write the image to an SD card
+3. Preconfigure in Imager:
+   - Enable SSH
+   - Set username and password (such as `rbpi-kvm` / `rbpi-kvm`)
+   - Configure WiFi (optional)
 
-### 2. 首次启动
+### 2. First startup
 
-1. 插入 SD 卡，连接 HDMI 采集卡和 OTG 线
-2. 开机，等待系统启动
-3. SSH 连接到树莓派：
+1. Insert the SD card and connect the HDMI capture card and OTG cable
+2. Power on and wait for the system to boot
+3. SSH to the Raspberry Pi:
    ```bash
    ssh rbpi-kvm@<树莓派IP>
    ```
 
-### 3. 一键部署
+### 3. One-click deployment
 
 ```bash
 # 下载完整仓库（部署脚本依赖 configs、scripts、systemd 和 edid）
@@ -67,28 +67,28 @@ chmod +x deploy.sh
 sudo ./deploy.sh
 ```
 
-### 4. 访问 PiKVM
+### 4. Access PiKVM
 
-部署完成后，浏览器打开：
+After deployment, open the following address in a browser:
 ```
 https://<树莓派IP>
 ```
 
-默认登录：
-- 用户名：`admin`
-- 密码：`admin`
+Default login:
+- Username: `admin`
+- Password: `admin`
 
-## 手动部署
+## Manual deployment
 
-如果自动脚本不适用，可以手动执行以下步骤：
+If the automated script is not suitable, you can perform the following steps manually:
 
-### 步骤 1：更新系统
+### Step 1: Update your system
 
 ```bash
 sudo apt update && sudo apt upgrade -y
 ```
 
-### 步骤 2：安装依赖
+### Step 2: Install dependencies
 
 ```bash
 sudo apt install -y git wget build-essential cmake \
@@ -97,7 +97,7 @@ sudo apt install -y git wget build-essential cmake \
   python3-dev python3-pip python3-setuptools
 ```
 
-### 步骤 3：编译安装 Python 3.10
+### Step 3: Compile and install Python 3.10
 
 ```bash
 cd /tmp
@@ -109,7 +109,7 @@ make -j$(nproc)
 sudo make install
 ```
 
-### 步骤 4：安装 fruity-pikvm
+### Step 4: Install fruity-pikvm
 
 ```bash
 cd /tmp
@@ -118,14 +118,14 @@ cd fruity-pikvm
 sudo ./install.sh
 ```
 
-### 步骤 5：修复兼容性问题
+### Step 5: Fix compatibility issues
 
 ```bash
 # 运行修复脚本
 sudo ./scripts/fix-compat.sh
 ```
 
-### 步骤 6：应用配置
+### Step 6: Apply Configuration
 
 ```bash
 sudo cp configs/override.yaml /etc/kvmd/override.yaml
@@ -137,7 +137,7 @@ sudo systemctl daemon-reload
 sudo systemctl enable kvmd-setup kvmd kvmd-nginx kvmd-webterm
 ```
 
-### 步骤 7：配置 OTG
+### Step 7: Configure OTG
 
 ```bash
 # 编辑 /boot/firmware/config.txt，确保有以下内容：
@@ -148,7 +148,7 @@ sudo systemctl enable kvmd-setup kvmd kvmd-nginx kvmd-webterm
 sudo reboot
 ```
 
-## 配置说明
+## Configuration instructions
 
 ### override.yaml
 
@@ -178,11 +178,11 @@ kvmd:
 
 ### kvmd-setup.sh
 
-启动时自动执行：
-- 创建 `/dev/kvmd-video` 符号链接
-- 设置 EDID
-- 由 uStreamer 持续跟随 DV timings，支持源设备晚开机
-- 修复权限
+Automatically executed on startup:
+- Create `/dev/kvmd-video` symbolic link
+- Set EDID
+- uStreamer continuously follows DV timings, allowing the source device to start later
+- Fix permissions
 
 ### boot/config.txt
 
@@ -193,34 +193,34 @@ dtoverlay=tc358743             # TC358743 HDMI 采集驱动
 enable_uart=1                  # 启用串口
 ```
 
-## 已知问题与解决方案
+## Known issues and solutions
 
-### 1. 黑屏 / NO SIGNAL
+### 1. Black screen / NO SIGNAL
 
-**原因**：EDID 未设置或 HDMI 源设备未输出信号
+**Cause**: EDID is not set or HDMI source device does not output signal
 
-**解决**：
+**Solution**:
 ```bash
 sudo systemctl stop kvmd
 sudo /usr/local/bin/kvmd-setup.sh
 sudo systemctl restart kvmd
 ```
 
-### 2. 分辨率显示 640x480
+### 2. Resolution display 640x480
 
-**原因**：DV timings 未正确设置
+**Cause**: DV timings are not set correctly
 
-**解决**：
+**Solution**:
 ```bash
 v4l2-ctl --device /dev/video0 --query-dv-timings
 # 使用 scripts/apply-optimizations.sh 启用 --dv-timings 自动同步。
 ```
 
-### 3. 鼠标键盘无响应
+### 3. Mouse and keyboard unresponsive
 
-**原因**：USB OTG 连接问题
+**Cause**: USB OTG connection problem
 
-**检查**：
+**Checks**:
 ```bash
 # 在被控设备上运行 lsusb，应看到 PiKVM 设备
 lsusb | grep -i pikvm
@@ -232,18 +232,18 @@ ls -la /dev/hidg*
 sudo sh -c 'echo -ne "\x00\x00\x04\x00\x00\x00\x00\x00" > /dev/hidg0'
 ```
 
-**解决**：
-- 确认使用 OTG 线（不是充电线）
-- 确认连接到树莓派的 USB-C 口
-- 尝试被控设备的其他 USB 口
+**Solution**:
+- Make sure to use an OTG cable (not a charging cable)
+- Confirm connection to the USB-C port of the Raspberry Pi
+- Try other USB ports of the controlled device
 
-### 4. 切换鼠标模式
+### 4. Switch mouse mode
 
-在 Web 界面点击 **System** 菜单，切换：
-- **Absolute**：绝对定位（默认，适合桌面系统）
-- **Relative**：相对定位（适合 BIOS/UEFI）
+Click the **System** menu in the web interface to switch:
+- **Absolute**: Absolute positioning (default, suitable for desktop systems)
+- **Relative**: relative positioning (suitable for BIOS/UEFI)
 
-### 5. libjpeg.so.8 缺失
+### 5. libjpeg.so.8 is missing
 
 ```bash
 # 从源码编译 libjpeg-turbo（带 JPEG8 ABI）
@@ -258,7 +258,7 @@ sudo make install
 sudo ldconfig
 ```
 
-### 6. libgpiod.so.2 缺失
+### 6. libgpiod.so.2 is missing
 
 ```bash
 # 从源码编译 libgpiod 1.6.x
@@ -272,7 +272,7 @@ sudo make install
 sudo ldconfig
 ```
 
-## 文件结构
+## File structure
 
 ```
 fruity-pikvm-deploy/
@@ -291,9 +291,9 @@ fruity-pikvm-deploy/
     └── tc358743-edid.hex  # TC358743 EDID
 ```
 
-## 许可证
+## License
 
-本项目基于 fruity-pikvm 和 PiKVM 开源项目。
+This project is based on fruity-pikvm and PiKVM open source projects.
 
 - [fruity-pikvm](https://github.com/jacobbar/fruity-pikvm) - GPLv3
 - [PiKVM](https://github.com/pikvm/pikvm) - GPLv3
