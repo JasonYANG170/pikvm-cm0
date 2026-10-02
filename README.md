@@ -2,6 +2,12 @@
 
 一键部署 PiKVM 到 Raspberry Pi CM0 + TC358743 HDMI 采集卡
 
+## 项目展示
+
+![基于树莓派 CM0 的 IPKVM 无线采集卡](docs/images/project-hardware.webp)
+
+[硬件项目与图片来源](https://oshwhub.com/jasonyang17/rbpi-kvm)
+
 ## 已有设备的视频优化
 
 已有安装请先阅读 [优化与回滚说明](docs/optimizations.md)，无需重装系统：
